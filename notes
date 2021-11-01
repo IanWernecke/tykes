@@ -1,0 +1,6 @@
+# to bump a minor version
+poetry version minor
+
+# to publish
+twine upload dist/*
+
