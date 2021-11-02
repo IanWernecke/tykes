@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tykes"
-version = "0.1.0"
+version = "0.2.0"
 description = "A python project designed to provide low-stimulation games to young children."
 # long_description = file: README.md
 # long_description_content_type = text/markdown

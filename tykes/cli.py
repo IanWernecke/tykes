@@ -132,6 +132,27 @@ def draw_inner_rect(surface, color, border):
     )
 
 
+# TODO: this should be a thread that gets waited upon
+def frame_rate(frames_per_second: int):
+    """This generator sleeps between intervals of when it is called."""
+    frame_interval = 1.0 / frames_per_second
+    start_time = time.time()
+    while True:
+
+        # calculate the next interval start time
+        next_time = start_time + frame_interval
+
+        yield next_time
+
+        # get the current time and if the interval has not yet elapsed, sleep
+        end_time = time.time()
+        if end_time < next_time:
+            time.sleep(next_time - end_time)
+            start_time = next_time
+        else:
+            start_time = end_time
+
+
 def generate(width: int, height: int) -> list:
     """Create a maze of the specified width and height."""
 
@@ -399,7 +420,7 @@ class Maze:
 
         # if the score has been updated, redraw the score surface
         self.score_surface = create_text_box_fixed(
-            text=f"SCORE: {self.score:02}",
+            text=f"SCORE: {self.score: 2}",
             border=0,
             size=20,
             width=self.maze_surface.get_width(),
@@ -449,9 +470,6 @@ class Maze:
 def maze_cmd(width: int = 20, height: int = 20):
     """Generate a maze for the tike."""
 
-    window = pygame.display.set_mode((640, 480))
-    window.fill(white)
-
     # create the maze object and render it onto the window
     maze = Maze(width=width, height=height)
 
@@ -464,8 +482,17 @@ def maze_cmd(width: int = 20, height: int = 20):
     maze.draw(window)
     pygame.display.flip()
 
+    # define the movement keys
+    movement_keys = {
+        pygame.K_UP: (0, -1),
+        pygame.K_DOWN: (0, 1),
+        pygame.K_LEFT: (-1, 0),
+        pygame.K_RIGHT: (1, 0)
+    }
+
     # enter the event loop
-    while True:
+    # 4643 frames drawn prior to frame rate implementation
+    for _ in frame_rate(frames_per_second=60):
 
         # for each of the events in the queue, obtain it
         for event in pygame.event.get():
@@ -487,14 +514,10 @@ def maze_cmd(width: int = 20, height: int = 20):
                         logger.warning('Failed to move backwards.')
 
                 # if an arrow key has been pressed, try to move
-                if (point_mod := {
-                    pygame.K_UP: (0, -1),
-                    pygame.K_DOWN: (0, 1),
-                    pygame.K_LEFT: (-1, 0),
-                    pygame.K_RIGHT: (1, 0)
-                }.get(event.key, None)) is not None:
+                if event.key in movement_keys:
 
                     # try to move to an adjacent point
+                    point_mod = movement_keys[event.key]
                     point = maze.point[0] + point_mod[0], maze.point[1] + point_mod[1]
                     maze.move(point)
 
