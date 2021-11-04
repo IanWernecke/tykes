@@ -15,10 +15,7 @@ def centralize(larger_surface, smaller_surface):
     large_x, large_y = larger_surface.get_size()
     small_x, small_y = smaller_surface.get_size()
 
-    return (
-        int(large_x / 2) - int(small_x / 2),
-        int(large_y / 2) - int(small_y / 2)
-    )
+    return (int(large_x / 2) - int(small_x / 2), int(large_y / 2) - int(small_y / 2))
 
 
 def neighbors(x: int, y: int, max_width: int, max_height: int):
@@ -33,7 +30,7 @@ def neighbors(x: int, y: int, max_width: int, max_height: int):
     if x < max_width - 1:
         yield x + 1, y
 
-    # if the height is less than the max 
+    # if the height is less than the max
     # v
     if y < max_height - 1:
         yield x, y + 1
@@ -43,7 +40,9 @@ def neighbors(x: int, y: int, max_width: int, max_height: int):
         yield x - 1, y
 
 
-def create_text_box_fixed(text, size=12, color=color.black, bg_color=color.white, border=3, border_color=color.black, width=200, height=50):
+def create_text_box_fixed(
+    text, size=12, color=color.black, bg_color=color.white, border=3, border_color=color.black, width=200, height=50
+):
 
     # use whatever system font is available for now, unfortunately
     font = pygame.font.SysFont(None, size)
@@ -63,7 +62,9 @@ def create_text_box_fixed(text, size=12, color=color.black, bg_color=color.white
     return surface
 
 
-def create_text_box(text, size=12, color=color.black, margin=10, bg_color=color.white, border=3, border_color=color.black):
+def create_text_box(
+    text, size=12, color=color.black, margin=10, bg_color=color.white, border=3, border_color=color.black
+):
 
     # use whatever system font is available for now, unfortunately
     font = pygame.font.SysFont(None, size)
@@ -100,11 +101,7 @@ def draw_inner_rect(surface, color, border):
     bg_x, bg_y = border, border
     bg_width = width - (border * 2)
     bg_height = height - (border * 2)
-    return pygame.draw.rect(
-        surface,
-        color,
-        pygame.Rect((bg_x, bg_y), (bg_width, bg_height))
-    )
+    return pygame.draw.rect(surface, color, pygame.Rect((bg_x, bg_y), (bg_width, bg_height)))
 
 
 # TODO: this should be a thread that gets waited upon
@@ -131,18 +128,13 @@ def frame_rate(frames_per_second: int):
 def generate(width: int, height: int) -> list:
     """Create a maze of the specified width and height."""
 
-    points = [(
-        random.randint(0, width - 1),
-        random.randint(0, height - 1)
-    )]
+    points = [(random.randint(0, width - 1), random.randint(0, height - 1))]
     connections = []
 
     def open_neighbors(x: int, y: int):
         """Return neighbors not already in the points list, and within the maximum ranges."""
         return [
-            neighbor
-            for neighbor in neighbors(x=x, y=y, max_width=width, max_height=height)
-            if neighbor not in points
+            neighbor for neighbor in neighbors(x=x, y=y, max_width=width, max_height=height) if neighbor not in points
         ]
 
     # while points within the field have open neighbors, walk them randomly and build a maze
@@ -186,4 +178,3 @@ def random_pop(items: list):
     if list_len == 1:
         return items.pop(0)
     return items.pop(random.randint(1, list_len) - 1)
-
