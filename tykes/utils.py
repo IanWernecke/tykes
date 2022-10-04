@@ -1,4 +1,5 @@
 # standard imports
+import math
 import random
 import time
 from copy import deepcopy
@@ -125,7 +126,7 @@ def frame_rate(frames_per_second: int):
             start_time = end_time
 
 
-def generate(width: int, height: int) -> list:
+def generate_easy(width: int, height: int) -> list:
     """Create a maze of the specified width and height."""
 
     points = [(random.randint(0, width - 1), random.randint(0, height - 1))]
@@ -143,6 +144,60 @@ def generate(width: int, height: int) -> list:
 
         # randomly pick one of the points that still have open neighbors
         point = random.choice(has_open_neighbors)
+
+        # get the points open neighbors
+        # ensure the specified point still has open neighbors
+        point_open_neighbors = open_neighbors(*point)
+        if not point_open_neighbors:
+            has_open_neighbors.remove(point)
+            continue
+
+        # if the point has only one open neighbor, connect and remove from list of points with open neighbors
+        if len(point_open_neighbors) == 1:
+            neighbor = point_open_neighbors.pop(0)
+            has_open_neighbors.remove(point)
+
+        # the point has more than one open neighbor, simply pick one at random
+        else:
+            neighbor = random_pop(point_open_neighbors)
+
+        # connect the selected neighbor to the point
+        points.append(neighbor)
+        connections.append((point, neighbor))
+
+        # if the point neighbor has open neighbors, add it to has_open_neighbors
+        if any(neighbor not in points for neighbor in neighbors(*neighbor, max_width=width, max_height=height)):
+            has_open_neighbors.append(neighbor)
+
+    # return the list of connections from (point_a, point_b)
+    return connections
+
+
+def generate_experiment(width: int, height: int) -> list:
+    """Create a maze of the specified width and height."""
+
+    points = [(random.randint(0, width - 1), random.randint(0, height - 1))]
+    connections = []
+
+    def open_neighbors(x: int, y: int):
+        """Return neighbors not already in the points list, and within the maximum ranges."""
+        return [
+            neighbor for neighbor in neighbors(x=x, y=y, max_width=width, max_height=height) if neighbor not in points
+        ]
+
+    # while points within the field have open neighbors, walk them randomly and build a maze
+    has_open_neighbors = deepcopy(points)
+    while has_open_neighbors:
+
+        # randomly pick one of the points that still have open neighbors
+        # point = random.choice(has_open_neighbors)
+        length = len(has_open_neighbors)
+        if length == 1:
+            point = has_open_neighbors[0]
+        else:
+            x = math.floor(math.sqrt(length))
+            x = math.floor(random.randint(1, x)) * math.floor(random.randint(1, x))
+            point = has_open_neighbors[x - 1]
 
         # get the points open neighbors
         # ensure the specified point still has open neighbors

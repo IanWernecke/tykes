@@ -1,15 +1,27 @@
 # standard imports
 import random
+import sys
 import time
 from typing import Tuple
 
 # installed imports
 import pygame
+import typer
 from loguru import logger
 
 # module imports
 from tykes import color
-from tykes.utils import centralize, create_text_box, create_text_box_fixed, frame_rate, generate
+from tykes.utils import (
+    centralize,
+    create_text_box,
+    create_text_box_fixed,
+    frame_rate,
+    generate_easy,
+    generate_experiment,
+)
+
+app = typer.Typer(no_args_is_help=True)
+
 
 # docs: "It is safe to call the init() function for any module more than once."
 pygame.init()
@@ -104,7 +116,8 @@ class Maze:
     def generate(self):
         """Draw the maze onto the maze surface."""
         # generate the connections required for a new maze
-        self._connections = generate(width=self.width, height=self.height)
+        self._connections = generate_easy(width=self.width, height=self.height)
+        # self._connections = generate_experiment(width=self.width, height=self.height)
 
         # fill maze black
         self.maze_surface.fill(color.black)
@@ -259,7 +272,8 @@ class Maze:
         return self.move((self.point[0] + mod[0], self.point[1] + mod[1]))
 
 
-def run(width: int, height: int):
+@app.command(name="maze")
+def main(width: int, height: int):
 
     # create the maze object and render it onto the window
     maze = Maze(width=width, height=height)
@@ -318,3 +332,7 @@ def run(width: int, height: int):
             maze.generate()
 
     return 0
+
+
+if __name__ == "__main__":
+    app()
