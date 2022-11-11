@@ -1,6 +1,6 @@
 import random
 
-from tykes.farkle import parse_dice
+from tykes.farkle.utils import parse_dice
 
 
 
@@ -64,10 +64,23 @@ def test_one():
 
 def test_pair_of_fives():
     """Ensure 2 fives present are always worth 100."""
+
+    # select 3 of (2, 3, 4, 6) and add one of (2, 3, 4, 6)
+
     assert parse_dice([5, 5, 2, 2, 3, 4]).value == 100
+    assert parse_dice([5, 5, 2, 2, 3, 6]).value == 100
+    assert parse_dice([5, 5, 2, 2, 4, 6]).value == 100
+
     assert parse_dice([5, 5, 2, 3, 3, 4]).value == 100
+    assert parse_dice([5, 5, 2, 3, 3, 6]).value == 100
     assert parse_dice([5, 5, 2, 3, 4, 4]).value == 100
+
     assert parse_dice([5, 5, 2, 3, 4, 6]).value == 100
+    assert parse_dice([5, 5, 2, 4, 4, 6]).value == 100
+    assert parse_dice([5, 5, 2, 4, 6, 6]).value == 100
+
+    assert parse_dice([5, 5, 3, 3, 4, 6]).value == 100
+    assert parse_dice([5, 5, 3, 4, 4, 6]).value == 100
     assert parse_dice([5, 5, 3, 4, 6, 6]).value == 100
 
 

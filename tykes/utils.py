@@ -21,6 +21,8 @@ def centralize(larger_surface, smaller_surface):
 
 def neighbors(x: int, y: int, max_width: int, max_height: int):
 
+    # note: max width and max height numbers should never be present in the results
+
     # if the height is greater than 1, yield (x, height - 1)
     # ^
     if y > 0:

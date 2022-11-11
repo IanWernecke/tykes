@@ -20,6 +20,10 @@ from loguru import logger
 
 # module imports
 from tykes import color
+
+# from tykes.farkle.main import app as farkle_app
+from tykes.farkle.main import main as farkle_main
+from tykes.flood.main import main as flood_main
 from tykes.maze import main as maze_main
 from tykes.memory import main as memory_main
 
@@ -27,11 +31,19 @@ from tykes.memory import main as memory_main
 #   globals
 #
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 
-# pygame must be initialized before any fonts are declared or anything
-# pygame.init()
+@app.command(name="farkle")
+def farkle_cmd():
+    """Play the dice-rolling game farkle."""
+    sys.exit(farkle_main())
+
+
+@app.command(name="flood")
+def flood_cmd():
+    """Play the simple color game 'Flood'."""
+    sys.exit(flood_main())
 
 
 @app.command(name="maze")
